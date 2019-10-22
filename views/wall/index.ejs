@@ -1,0 +1,160 @@
+<% include ../partials/header %>
+
+    <div class="col-md-1">
+        <div class="row">
+            <a class="btn btn-block btn-primary" href="/users/network"><i class="fas fa-users"></i>My Network</a>
+        </div>
+        <div class="row">
+            <a class="btn btn-block btn-primary" href="/users/me"><i class="fas fa-user"></i>Me</a>
+        </div>
+    </div>
+        
+        
+ <!--THIS IS THE POST BOX -->
+<div class="container pb-cmnt-container "> 
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card card-info">
+                <div class="card-block">
+                    <form class="form-inline" action="/wall" method="POST" enctype="multipart/form-data">
+                        <input placeholder="Share a photo,video,a music file or an idea" class="pb-cmnt-textarea" name ="usertext">
+                        <div class="btn-group">
+                            <label class="btn" type="button">
+                               <i class="fas fa-image"></i><input type="file" name="image" class="image" hidden>
+                            </label>
+                            <label class="btn" type="button">
+                               <i class="fas fa-video"></i><input type="file" hidden>
+                            </label>
+                            <label class="btn" type="button">
+                               <i class="fas fa-music"></i><input type="file" hidden>
+                            </label>
+                        </div>
+                        <div class = "form-group">
+                            <button class="btn btn-primary float-right" type="submit">Share</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-cmnt-container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <% posts.forEach(function(post){ %>
+                <!--if the post is of currentUser's-->
+                <% if (post.author.id.equals(currentUser.id)) {%>
+                    <div class="well">
+                        <div class="post-heading">
+                            <% if (!(post.author.id.userAvatar)){ %>
+                                <div class="pull-left image">
+                                    <img src="/uploads/2018-09-16T13:22:41.307ZuserAvatar" class="img-circle avatar">
+                                </div>
+                            <% } else { %>
+                                <div class="pull-left image">
+                                    <img src="/uploads/<%= post.author.id.userAvatar %>" class="img-circle avatar">
+                                </div>
+                            <% } %>
+                            <div class="pull-left meta">
+                                <div class="title h5">
+                                    <b><%= post.author.username %></b>
+                                    made a post.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-description">
+                            <p><%= post.text %></p>
+                        </div>
+                        
+                        <% if((post.image)) { %>
+                            <div class="post-description">
+                                <img src="/uploads/<%= post.image %>" class="image-responsive">
+                            </div>
+                        <% } %>
+                        
+                        <a href="/wall/post/<%= post.id %>">Comment or Like</a>
+                    </div>
+                <% } else { %>
+                <!--loop through all of his friends-->
+                    <% friendships.forEach(function(friendships){ %>
+                    <!--print the friend's post-->
+                        <% if(friendships.equals(post.author.id)){ %>
+                            <div class="well">
+                                <div class="post-heading">
+                                    <% if (!(post.author.id.userAvatar)){ %>
+                                        <div class="pull-left image">
+                                            <img src="/uploads/2018-09-16T13:22:41.307ZuserAvatar" class="img-circle avatar">
+                                        </div>
+                                    <% } else { %>
+                                        <div class="pull-left image">
+                                            <img src="/uploads/<%= post.author.id.userAvatar %>" class="img-circle avatar">
+                                        </div>
+                                    <% } %>
+                                    <div class="pull-left meta">
+                                        <div class="title h5">
+                                            <b><%= post.author.username %></b>
+                                            made a post.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-description">
+                                    <p><%= post.text %></p>
+                                </div>
+                                
+                                <% if((post.image)) { %>
+                                    <div class="post-description">
+                                        <img src="/uploads/<%= post.image %>" class="image-responsive">
+                                    </div>
+                                <% } %>
+                                
+                                <a href="/wall/post/<%= post.id %>">Comment or Like</a>
+                            </div>
+                        <!--if the post is not of his friends but a friend of him liked it-->
+                        <% } else if(post.likers !== 0){%>
+                            <% post.likers.forEach(function(liker){ %>
+                                <% if(friendships.equals(liker)) {%>
+                                    <div class="well">
+                                        <div class="post-heading">
+                                            <% if (!(post.author.id.userAvatar)){ %>
+                                                <div class="pull-left image">
+                                                    <img src="/uploads/2018-09-16T13:22:41.307ZuserAvatar" class="img-circle avatar">
+                                                </div>
+                                            <% } else { %>
+                                                <div class="pull-left image">
+                                                    <img src="/uploads/<%= post.author.id.userAvatar %>" class="img-circle avatar">
+                                                </div>
+                                            <% } %>
+                                            <div class="pull-left meta">
+                                                <div class="title h5">
+                                                    <b><%= post.author.username %></b>
+                                                    made a post.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="post-description">
+                                            <p><%= post.text %></p>
+                                        </div>
+                                        
+                                        <% if((post.image)) { %>
+                                            <div class="post-description">
+                                                <img src="/uploads/<%= post.image %>" class="image-responsive">
+                                            </div>
+                                        <% } %>
+                                        
+                                        <a href="/wall/post/<%= post.id %>">Comment or Like</a>
+                                    </div>
+                                <% } %>
+                            <% }); %>
+                        <% } %>
+                    
+                    <% }) %>
+                <% } %>
+            <% }); %>
+        </div>
+    </div>
+</div>    
+        
+        
+        
+<% include ../partials/footer %>
